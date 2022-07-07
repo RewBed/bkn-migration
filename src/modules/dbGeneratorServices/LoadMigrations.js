@@ -28,6 +28,20 @@ module.exports = class LoadMigrations {
     triggertSql = 'GetTriggers.sql';
 
     /**
+     * Настройки подключения db
+     *
+     * @type {{}}
+     */
+    dbOptions = {}
+
+    /**
+     * Имя базы данных
+     *
+     * @type {string}
+     */
+    dbName = '';
+
+    /**
      * @param rootFolder
      * Папка для сохранения файлов
      *
@@ -47,28 +61,38 @@ module.exports = class LoadMigrations {
      */
     constructor(rootFolder, dbName, host, user, password, port) {
         this.rootFolder = rootFolder;
-
-        let options = {
+        this.dbName = dbName;
+        this.dbOptions = {
             host,
             user,
             password,
             port,
             database : dbName
-        }
+        };
+    }
 
-        this.connection = mysql.createConnection(options);
+    /**
+     * Запускает загрузку из базы
+     *
+     * @returns {Promise<unknown>}
+     */
+    load() {
+        return new Promise((resolve, reject) => {
+            this.connection = mysql.createConnection(this.dbOptions);
 
-        this.connection.connect({}, (error) => {
-            if(error) {
-                this.connection.end();
-                console.error("Ошибка подключения к базе данных");
-            }
-            else {
-                this.createMigrate(dbName)
-                .then(() => {
+            this.connection.connect({}, (error) => {
+                if(error) {
                     this.connection.end();
-                });
-            }
+                    console.error("Ошибка подключения к базе данных");
+                    reject();
+                }
+                else {
+                    this.createMigrate(this.dbName).then(() => {
+                        this.connection.end();
+                        resolve();
+                    });
+                }
+            });
         });
     }
 

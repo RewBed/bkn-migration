@@ -8,6 +8,8 @@ const path = require('path');
 
 let Argv = require('./modules/ArgvParser');
 let LoadMigrations = require('./modules/dbGeneratorServices/LoadMigrations');
+let GitProcess = require('./modules/GitProcess');
+const {DATETIME} = require("mysql/lib/protocol/constants/types");
 
 let configFilePath = process.cwd() + "/mg-config.yaml";
 
@@ -16,10 +18,10 @@ if(fs.existsSync(configFilePath)) {
     try {
         const config = yaml.load(fs.readFileSync(configFilePath, 'utf8'));
 
+        // аргументы при запуске
         let argv = new Argv();
-
-        // argv.setParam('path', false, false,'./dbStructure');
         argv.setParam('dbName', false, true);
+        argv.setParam('git', true, false, false);
         argv.parse();
 
         // путь до рабочей папки
@@ -31,9 +33,25 @@ if(fs.existsSync(configFilePath)) {
             console.log('Создана директория: ' + path.resolve(folderPath));
         }
 
+        let git = new GitProcess();
+        let migration = new LoadMigrations(path.resolve(folderPath), argv.getParamVal('dbName'), config.db.host, config.db.user, config.db.password, config.db.port);
+
+        // если есть флаг GIT
+        if(argv.getParamVal('git')) {
+            git.pull().then(() => {
+                migration.load().then(() => {
+                    let commit = "update " + new Date().toTimeString();
+                    git.commitAndPush(commit).then(r => r);
+                });
+            });
+        }
+
+        // только выгружаем миграцию
+        else {
+            migration.load().then(r => r);
+        }
 
 
-        new LoadMigrations(path.resolve(folderPath), argv.getParamVal('dbName'), config.db.host, config.db.user, config.db.password, config.db.port);
     } catch (e) {
         console.error("Ошибка чтения файла настроек");
     }

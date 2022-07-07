@@ -51,7 +51,7 @@ module.exports = class ArgvParser {
      * @param alias {String}
      * Имя параметра
      *
-     * @param isFLag {Bool}
+     * @param isFLag {boolean}
      * Параметр является флагом, следовательно, у него не может быть значения
      *
      * @param isRequired
