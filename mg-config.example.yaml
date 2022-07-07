@@ -1,0 +1,8 @@
+db:
+  host: localhost
+  user: UserName
+  password: secret
+  port: 3306
+
+path:
+  folder: /

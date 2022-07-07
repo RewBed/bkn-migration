@@ -5,9 +5,7 @@ module.exports = class ArgvParser {
      *
      * @type {{}}
      */
-    parseFields = {
-
-    }
+    parseFields = {}
 
     /**
      * Запустить парсер аргументов
@@ -34,12 +32,13 @@ module.exports = class ArgvParser {
             else {
                 i++;
             }
+        }
 
-            for(let key in this.parseFields) {
-                if(this.parseFields[key].isRequired) {
-                    if(!this.parseFields[key].value) {
-                        console.error('Не указан обязательный аргумент: ' + key);
-                    }
+        for(let key in this.parseFields) {
+            if(this.parseFields[key].isRequired) {
+                if(!this.parseFields[key].value) {
+                    console.error('Не указан обязательный аргумент: ' + key);
+                    process.exit();
                 }
             }
         }

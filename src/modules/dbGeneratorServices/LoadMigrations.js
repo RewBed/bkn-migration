@@ -33,23 +33,43 @@ module.exports = class LoadMigrations {
      *
      * @param dbName
      * Имя базы данных
+     *
+     * @param host
+     * Хост
+     *
+     * @param user
+     * Имя пользователя
+     *
+     * @param password
+     * Пароль
+     *
+     * @param port
      */
-    constructor(rootFolder, dbName) {
+    constructor(rootFolder, dbName, host, user, password, port) {
         this.rootFolder = rootFolder;
 
-        this.connection = mysql.createConnection({
-            host     : '****',
-            user     : '****',
-            password : '****',
+        let options = {
+            host,
+            user,
+            password,
+            port,
             database : dbName
-        });
-        this.connection.connect();
+        }
 
-        this.createMigrate(dbName)
-            .then(() => {
+        this.connection = mysql.createConnection(options);
+
+        this.connection.connect({}, (error) => {
+            if(error) {
                 this.connection.end();
-                console.log('resolve');
-            });
+                console.error("Ошибка подключения к базе данных");
+            }
+            else {
+                this.createMigrate(dbName)
+                .then(() => {
+                    this.connection.end();
+                });
+            }
+        });
     }
 
     /**
@@ -77,7 +97,7 @@ module.exports = class LoadMigrations {
      */
     async getTables(dbName) {
 
-        console.log('Выгрузка таблиц и представлений');
+        console.log('Выгрузка таблиц и представлений...');
 
         return new Promise((resolve, reject) => {
             let query = "SHOW FULL TABLES";
@@ -106,7 +126,7 @@ module.exports = class LoadMigrations {
      */
     async getTriggers(dbName) {
 
-        console.log('Выгрузка триггеров');
+        console.log('Выгрузка триггеров...');
 
         return new Promise((resolve, reject) => {
             let query = "show triggers";

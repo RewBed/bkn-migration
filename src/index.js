@@ -2,47 +2,46 @@
 
 'use strict';
 
-/*
-let Argv = require('./modules/ArgvParser');
-const fs = require("fs");
-const path = require('path');
-let LoadMigrations = require('./modules/dbGeneratorServices/LoadMigrations');
-
-let argv = new Argv();
-
-argv.setParam('path', false, false,'./dbStructure');
-argv.setParam('dbName', false, true);
-argv.parse();
-
-// путь до рабочей папки
-let folderPath = argv.getParamVal('path') + '/' + argv.getParamVal('dbName');
-
-// проверяем существование папки
-if(!fs.existsSync(folderPath)) {
-    fs.mkdirSync(folderPath, { recursive: true });
-    console.log('Создана директория: ' + path.resolve(folderPath));
-}
-
-new LoadMigrations(path.resolve(folderPath), argv.getParamVal('dbName'));*/
-
-/*
 const yaml = require('js-yaml');
 const fs   = require('fs');
+const path = require('path');
 
-// Get document, or throw exception on error
-try {
-    const doc = yaml.load(fs.readFileSync('./mg-config.example.yaml', 'utf8'));
-    console.log(doc);
-} catch (e) {
-    console.log(e);
+let Argv = require('./modules/ArgvParser');
+let LoadMigrations = require('./modules/dbGeneratorServices/LoadMigrations');
+
+let configFilePath = process.cwd() + "/mg-config.yaml";
+
+// проверка существования конфига
+if(fs.existsSync(configFilePath)) {
+    try {
+        const config = yaml.load(fs.readFileSync(configFilePath, 'utf8'));
+
+        let argv = new Argv();
+
+        // argv.setParam('path', false, false,'./dbStructure');
+        argv.setParam('dbName', false, true);
+        argv.parse();
+
+        // путь до рабочей папки
+        let folderPath = process.cwd() + '/' + config.path.folder + '/' + argv.getParamVal('dbName');
+
+        // проверяем существование папки
+        if(!fs.existsSync(folderPath)) {
+            fs.mkdirSync(folderPath, { recursive: true });
+            console.log('Создана директория: ' + path.resolve(folderPath));
+        }
+
+
+
+        new LoadMigrations(path.resolve(folderPath), argv.getParamVal('dbName'), config.db.host, config.db.user, config.db.password, config.db.port);
+    } catch (e) {
+        console.error("Ошибка чтения файла настроек");
+    }
+}
+else {
+    console.error("Отсутствует файл настроек");
 }
 
- */
 
-let x = 20;
 
-x = x + 2;
 
-console.log(x);
-
-console.log("START AS GLOBAL");
