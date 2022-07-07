@@ -1,3 +1,7 @@
+#!/usr/bin/env node
+
+'use strict';
+
 /*
 let Argv = require('./modules/ArgvParser');
 const fs = require("fs");
@@ -34,5 +38,11 @@ try {
 }
 
  */
+
+let x = 20;
+
+x = x + 2;
+
+console.log(x);
 
 console.log("START AS GLOBAL");
