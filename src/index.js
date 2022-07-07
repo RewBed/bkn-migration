@@ -9,14 +9,26 @@ const path = require('path');
 let Argv = require('./modules/ArgvParser');
 let LoadMigrations = require('./modules/dbGeneratorServices/LoadMigrations');
 let GitProcess = require('./modules/GitProcess');
-const {DATETIME} = require("mysql/lib/protocol/constants/types");
 
 let configFilePath = process.cwd() + "/mg-config.yaml";
+
+// настройки
+let config = {
+    db: {
+        host: '',
+        username: '',
+        password: '',
+        port: ''
+    },
+    path: {
+        folder: ''
+    }
+};
 
 // проверка существования конфига
 if(fs.existsSync(configFilePath)) {
     try {
-        const config = yaml.load(fs.readFileSync(configFilePath, 'utf8'));
+        config = yaml.load(fs.readFileSync(configFilePath, 'utf8'));
 
         // аргументы при запуске
         let argv = new Argv();

@@ -55,7 +55,7 @@ module.exports = class ArgvParser {
      * Параметр является флагом, следовательно, у него не может быть значения
      *
      * @param isRequired
-     * @param defaultVal {String}
+     * @param defaultVal
      */
     setParam(alias, isFLag = false, isRequired = false,  defaultVal = '') {
         this.parseFields[alias] = {
