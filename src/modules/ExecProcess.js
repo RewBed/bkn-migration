@@ -14,7 +14,7 @@ module.exports = class ExecProcess {
      */
     async process(command, print = true) {
         return new Promise((resolve, reject) => {
-            exec(command, (error, stdout, stderr) => {
+            exec(command, {maxBuffer: 4096 * 4096}, (error, stdout, stderr) => {
                 if (error) {
                     if(print)
                         console.log(`error: ${error.message}`);
