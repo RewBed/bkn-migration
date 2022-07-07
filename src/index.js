@@ -21,4 +21,18 @@ if(!fs.existsSync(folderPath)) {
 
 new LoadMigrations(path.resolve(folderPath), argv.getParamVal('dbName'));*/
 
+/*
+const yaml = require('js-yaml');
+const fs   = require('fs');
+
+// Get document, or throw exception on error
+try {
+    const doc = yaml.load(fs.readFileSync('./mg-config.example.yaml', 'utf8'));
+    console.log(doc);
+} catch (e) {
+    console.log(e);
+}
+
+ */
+
 console.log("START AS GLOBAL");

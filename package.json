@@ -17,6 +17,10 @@
   },
   "homepage": "https://github.com/RewBed/bkn-migration#readme",
   "dependencies": {
+    "js-yaml": "^4.1.0",
     "mysql": "^2.18.1"
+  },
+  "bin": {
+    "bkn-migration": "src/index.js"
   }
 }
