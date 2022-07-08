@@ -131,7 +131,7 @@ module.exports = class LoadMigrations {
 
                 let i = 1;
                 for (const table of tables) {
-                    await this.getCreateTable(table[`Tables_in_${dbName}`]);
+                    await this.getCreateTable(table[`Tables_in_${dbName}`], table['Table_type']);
                     process.stdout.write("\r" + 'Обработано: ' + i + '/' + tables.length);
                     i++;
                 }
@@ -201,16 +201,19 @@ module.exports = class LoadMigrations {
      * Вернуть код для создания таблицы
      *
      * @param tableName
+     * @param type
      * @returns {Promise<void>}
      */
-    async getCreateTable(tableName) {
+    async getCreateTable(tableName, type) {
         return new Promise((resolve, reject) => {
             this.connection.query("SHOW CREATE TABLE `"+tableName+"`", (error, results) => {
                 if(error)
                     reject();
 
                 let filePath = this.rootFolder + '/' + tableName + '.sql';
-                fs.writeFileSync(filePath, results[0]['Create Table']);
+
+                let data = (type === 'BASE TABLE') ? results[0]['Create Table'] : results[0]['Create View'];
+                fs.writeFileSync(filePath, data);
 
                 resolve(results);
             });
