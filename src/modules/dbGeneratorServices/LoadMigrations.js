@@ -212,7 +212,7 @@ module.exports = class LoadMigrations {
 
                 let filePath = this.rootFolder + '/' + tableName + '.sql';
 
-                let data = (type === 'BASE TABLE') ? results[0]['Create Table'] : results[0]['Create View'];
+                let data = (type === 'BASE TABLE') ? results[0]['Create Table'].replace(/AUTO_INCREMENT=[0-9]+/,'') : results[0]['Create View'];
                 fs.writeFileSync(filePath, data);
 
                 resolve(results);
